@@ -7,7 +7,6 @@ try {
 	$db = new PDO('sqlite:data.sqlite3');
 	$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	$db->exec("CREATE TABLE IF NOT EXISTS data (id INTEGER PRIMARY KEY, title TEXT, message TEXT, visible INTEGER)");
-
 	switch ($_SERVER['REQUEST_METHOD']) {
 		case 'POST':
 		$fh = @fopen($_FILES['csv']['tmp_name'], 'r+');
@@ -27,14 +26,18 @@ try {
 		$out = ([ 'success' => true, 'rows' => $rows ]);
 		break;
 		case 'GET':
+		$limit = intval(isset($_GET['limit']) ? $_GET['limit'] : 20);
+		$page = intval(isset($_GET['page']) ? $_GET['page'] : 1);
+		$sqlpage = ($page-1) * $limit;
 		if (isset($_GET['id'])) {	
 			$stmt = $db->prepare("SELECT * FROM data WHERE id = :id AND visible = 1");
-			$stmt->execute([ $_GET['id'] ]);
+			$stmt->execute([ 'id' => $_GET['id'] ]);
 			$out = ['data' => $stmt->fetch(PDO::FETCH_OBJ)];
+		} else if (isset($_GET['title'])) {
+			$stmt = $db->prepare("SELECT * FROM data WHERE title LIKE :title AND visible = 1 LIMIT $sqlpage, $limit");
+			$stmt->execute([ 'title' => ('%'.$_GET['title'].'%') ]);
+			$out = ['data' => $stmt->fetchAll(PDO::FETCH_OBJ), 'page' => $page, 'limit' => $limit];
 		} else { 
-			$limit = intval(isset($_GET['limit']) ? $_GET['limit'] : 20);
-			$page = intval(isset($_GET['page']) ? $_GET['page'] : 1);
-			$sqlpage = ($page-1) * $limit;
 			$stmt = $db->prepare("SELECT * FROM data WHERE visible = 1 LIMIT $sqlpage, $limit");
 			$stmt->execute();
 			$out = ['data' => $stmt->fetchAll(PDO::FETCH_OBJ), 'page' => $page, 'limit' => $limit];
