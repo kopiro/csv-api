@@ -48,5 +48,5 @@ try {
 	$out = ['error' => [ 'message' => $e->getMessage() ]];
 }
 
-$out['benchmark'] = microtime(1) - START;
+header('X-Benchmark: ' . 1000 * (microtime(1) - START));
 echo json_encode($out, JSON_NUMERIC_CHECK);

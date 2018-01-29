@@ -1,7 +1,9 @@
 <?php
 
+/* diskutil erasevolume HFS+ 'RAM' `hdiutil attach -nomount ram://1048576` */
+
 define('START', microtime(1));
-define('DIR', __DIR__ . '/fsindex');
+define('DIR', '/Volumes/RAM');
 
 try {
 	switch ($_SERVER['REQUEST_METHOD']) {

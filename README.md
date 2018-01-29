@@ -1,10 +1,21 @@
 # CSV-API Server
 
-Simple API Server that uses SQLite for storage, CSV for data input
+Simple minimalist CSV-API server that supports data CSV uploads and retrieval via JSON.
 
-### Features
+### Benchmarks
 
-* CSV Upload
-* SQLite storage
-* Column filtering
-* Pagination
+#### PHP Server with SQLite
+
+* ?id={XXX}: ~0.7ms
+
+#### PHP Server with Filesystem index
+
+* ?id={XXX}: ~0.04ms
+
+#### PHP with Filesystem index on RAM
+
+* ?id={XXX}: ~0.03ms
+
+#### C Server with Filesytem index on RAM
+
+* ?id={XXX}: ~0.01ms
